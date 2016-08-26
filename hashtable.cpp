@@ -45,7 +45,7 @@ public:
     return "";
   }
 
-  void remove(int key)
+  bool remove(int key)
   {
     int index = hashModuloM(key);
     auto& list = hashTab[index];
@@ -54,9 +54,10 @@ public:
       if (iter->first == key)
       {
         list.erase(iter);
-        return;
+        return true;
       }
     }
+    return false;
   }
 
 private:
@@ -111,7 +112,27 @@ TEST(hashTable, 6)
   hashTable ht;
   ht.insert(0, "abc");
   EXPECT_TRUE("abc" == ht.find(0));
-  ht.remove(0);
+  EXPECT_TRUE(ht.remove(0));
   EXPECT_TRUE("" == ht.find(0));
+}
+
+TEST(hashTable, 7)
+{
+  hashTable ht;
+  ht.insert(0, "abc");
+  ht.insert(2, "dfe");
+  ht.insert(4, "gh");
+  
+  EXPECT_TRUE(ht.remove(0));
+  EXPECT_TRUE("" == ht.find(0));
+
+  EXPECT_FALSE(ht.remove(0));
+  EXPECT_FALSE(ht.remove(1));
+  EXPECT_FALSE(ht.remove(3));
+
+  EXPECT_TRUE(ht.remove(4));
+
+  EXPECT_TRUE("" == ht.find(4));
+  EXPECT_TRUE("dfe" == ht.find(2));
 }
 
