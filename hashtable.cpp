@@ -13,56 +13,136 @@ int hashModuloM(int key)
   return (key & 0x7FFFFFFF) % M;
 }
 
-class hashTable
+namespace separateChaining 
 {
-public:
-  hashTable()
+  class hashTable
   {
-    hashTab.resize(M);
-  }
-  ~hashTable() {}
-  hashTable(const hashTable& rhs) = delete;
-  hashTable& operator=(const hashTable& rhs) = delete;
-
-  void insert(int key, const std::string& value)
-  {
-    int index = hashModuloM(key);
-    for (auto& elem : hashTab[index])
-      if (elem.first == key)
-      {
-        elem.second = value;
-        return;
-      }
-    hashTab[index].push_back(std::make_pair(key, value));
-  }
-
-  std::string find(int key)
-  {
-    int index = hashModuloM(key);
-    for (auto& elem : hashTab[index])
-      if (elem.first == key)
-        return elem.second;
-    return "";
-  }
-
-  bool remove(int key)
-  {
-    int index = hashModuloM(key);
-    auto& list = hashTab[index];
-    for (auto iter = list.begin(); iter != list.end(); ++iter)
+  public:
+    hashTable()
     {
-      if (iter->first == key)
-      {
-        list.erase(iter);
-        return true;
-      }
+      hashTab.resize(M);
     }
-    return false;
-  }
+    ~hashTable() {}
+    hashTable(const hashTable& rhs) = delete;
+    hashTable& operator=(const hashTable& rhs) = delete;
 
-private:
-  std::vector < std::list < std::pair <int, std::string> > > hashTab;
-};
+    void insert(int key, const std::string& value)
+    {
+      int index = hashModuloM(key);
+      for (auto& elem : hashTab[index])
+        if (elem.first == key)
+        {
+          elem.second = value;
+          return;
+        }
+      hashTab[index].push_back(std::make_pair(key, value));
+    }
+
+    std::string find(int key)
+    {
+      int index = hashModuloM(key);
+      for (auto& elem : hashTab[index])
+        if (elem.first == key)
+          return elem.second;
+      return "";
+    }
+
+    bool remove(int key)
+    {
+      int index = hashModuloM(key);
+      auto& list = hashTab[index];
+      for (auto iter = list.begin(); iter != list.end(); ++iter)
+      {
+        if (iter->first == key)
+        {
+          list.erase(iter);
+          return true;
+        }
+      }
+      return false;
+    }
+
+  private:
+    std::vector < std::list < std::pair <int, std::string> > > hashTab;
+  };
+}
+
+namespace linearProbing
+{
+  class hashTable
+  {
+  public:
+    hashTable() : hashTab(M , std::make_pair(-1, ""))
+    {
+    }
+    ~hashTable() {}
+    hashTable(const hashTable& rhs) = delete;
+    hashTable& operator=(const hashTable& rhs) = delete;
+
+    void insert(int key, const std::string& value)
+    {
+      int index = hashModuloM(key);
+      int saveIndex = index;
+      auto& elem = hashTab[index];
+      while (true)
+      {
+        auto& elem = hashTab[index];
+        if (elem.first == -1)
+        {
+          elem.first = key;
+          elem.second = value;
+          break;
+        }
+        if (index < M)
+        {
+          index++;
+          if (index == saveIndex)
+            throw std::runtime_error("not enough space");
+        }
+        else
+        {
+          index = 0;
+        }
+      }
+      return;
+    }
+
+    std::string find(int key)
+    {
+      int index = hashModuloM(key);
+      while (true)
+      {
+        auto& elem = hashTab[index];
+        if (elem.first == key)
+        {
+          return elem.second;
+        }
+        if (index < M)
+        {
+          index++;
+        }
+        else
+        {
+          break;
+        }
+      }
+      return;
+
+    }
+
+    bool remove(int key)
+    {
+      int index = hashModuloM(key);
+      auto& list = hashTab[index];
+      
+    }
+
+  private:
+    std::vector < std::pair <int, std::string> > hashTab;
+  };
+}
+
+using namespace separateChaining
 
 TEST(hashTable, 1)
 {
