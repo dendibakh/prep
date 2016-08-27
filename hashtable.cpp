@@ -2,6 +2,7 @@
 #include <string>
 #include <gtest/gtest.h>
 #include <list>
+#include <iostream>
 
 // hashtable of <int, string>
 // hash is modulo M
@@ -72,6 +73,9 @@ namespace linearProbing
   class hashTable
   {
   public:
+    static const int emptySlotKey{-1};
+    static const int deletedSlotKey{-2};
+
     hashTable() : hashTab(M , std::make_pair(-1, ""))
     {
     }
@@ -79,21 +83,21 @@ namespace linearProbing
     hashTable(const hashTable& rhs) = delete;
     hashTable& operator=(const hashTable& rhs) = delete;
 
+
     void insert(int key, const std::string& value)
     {
       int index = hashModuloM(key);
       int saveIndex = index;
-      auto& elem = hashTab[index];
       while (true)
       {
         auto& elem = hashTab[index];
-        if (elem.first == -1)
+        if (elem.first == emptySlotKey || elem.first == key || elem.first == deletedSlotKey)
         {
           elem.first = key;
           elem.second = value;
           break;
         }
-        if (index < M)
+        if (index < M - 1)
         {
           index++;
           if (index == saveIndex)
@@ -109,32 +113,47 @@ namespace linearProbing
 
     std::string find(int key)
     {
-      int index = hashModuloM(key);
-      while (true)
-      {
-        auto& elem = hashTab[index];
-        if (elem.first == key)
-        {
-          return elem.second;
-        }
-        if (index < M)
-        {
-          index++;
-        }
-        else
-        {
-          break;
-        }
-      }
-      return;
-
+      int index = findIndex(key);
+      if (index == emptySlotKey)
+        return "";
+      return hashTab[index].second;
     }
 
     bool remove(int key)
     {
+      int index = findIndex(key);
+      if (index == emptySlotKey)
+        return false;
+      hashTab[index].first = deletedSlotKey;
+      return true;
+    }
+
+  private:
+    int findIndex(int key)
+    {
       int index = hashModuloM(key);
-      auto& list = hashTab[index];
-      
+      int saveIndex = index;
+      while (true)
+      {
+        //std::cout << "search: " << index << " \n";
+        auto& elem = hashTab[index];
+        if (elem.first == emptySlotKey)
+          return emptySlotKey;
+        else if (elem.first == key && elem.first != deletedSlotKey)
+          return index;
+
+        if (index < M - 1)
+        {
+          index++;
+          if (index == saveIndex)
+            return emptySlotKey;
+        }
+        else
+        {
+          index = 0;
+        }
+      }
+      return emptySlotKey;
     }
 
   private:
@@ -142,7 +161,8 @@ namespace linearProbing
   };
 }
 
-using namespace separateChaining
+//using namespace separateChaining;
+using namespace linearProbing;
 
 TEST(hashTable, 1)
 {
@@ -214,5 +234,44 @@ TEST(hashTable, 7)
 
   EXPECT_TRUE("" == ht.find(4));
   EXPECT_TRUE("dfe" == ht.find(2));
+}
+
+TEST(hashTable, 8)
+{
+  hashTable ht;
+  ht.insert(5, "a");
+  ht.insert(55, "b");
+  ht.insert(6, "c");
+  ht.insert(105, "d");
+  
+  EXPECT_TRUE(ht.remove(55));
+  EXPECT_TRUE("" == ht.find(55));
+
+  EXPECT_TRUE("a" == ht.find(5));
+  EXPECT_TRUE("c" == ht.find(6));
+  EXPECT_TRUE("d" == ht.find(105));
+}
+
+TEST(hashTable, 9)
+{
+  hashTable ht;
+  ht.insert(5, "a");
+  ht.insert(55, "b");
+  ht.insert(6, "c");
+  ht.insert(105, "d");
+  
+  EXPECT_TRUE(ht.remove(55));
+  EXPECT_TRUE("" == ht.find(55));
+
+  EXPECT_TRUE("a" == ht.find(5));
+  EXPECT_TRUE("c" == ht.find(6));
+  EXPECT_TRUE("d" == ht.find(105));
+
+  ht.insert(155, "e");
+  
+  EXPECT_TRUE("a" == ht.find(5));
+  EXPECT_TRUE("e" == ht.find(155));
+  EXPECT_TRUE("c" == ht.find(6));
+  EXPECT_TRUE("d" == ht.find(105));
 }
 
