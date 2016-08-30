@@ -280,35 +280,32 @@ std::string Btree::preOrderTraversal()
 std::string Btree::postOrderTraversal()
 {
   std::string result = "";
-  std::stack<Node*> inOrder;
+  std::stack<Node*> postOrder;
   Node* current = root;
+  Node* lastVisited = nullptr;
 
-  std::stack<int> values;
-
-  do
+  while(!postOrder.empty() || current)
   {
-    while (current)
+    if (current)
     {
-      values.push(current->val);
-      inOrder.push(current);
-      current = current->right;
+      postOrder.push(current);
+      current = current->left;
     }
-
-    if (!inOrder.empty())
+    else
     {
-      Node* top = inOrder.top();
-      inOrder.pop();
-      current = top->left;
+      Node* top = postOrder.top();
+      if (top->right && lastVisited != top->right)
+      {
+        current = top->right;
+      }
+      else
+      {
+        result += itoa(top->val) + ' ';
+        lastVisited = postOrder.top();
+        postOrder.pop();
+      }
     }
-  }
-  while(!inOrder.empty() || current);
-
-  while(!values.empty())
-  {
-    result += itoa(values.top()) + ' ';
-    values.pop();
-  }
-
+  } 
   return result;
 }
 
