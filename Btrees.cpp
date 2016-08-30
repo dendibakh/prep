@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <stack>
+#include <string>
 #include <sstream>
 
 // find
@@ -37,6 +38,8 @@ public:
   int height();
   bool remove(int key);
 
+  std::string toString();
+  
   std::string inOrderTraversal();
   std::string preOrderTraversal();
   std::string postOrderTraversal();
@@ -177,11 +180,47 @@ bool Btree::nodeHasBothChildren(Node* node)
   return node->right && node->left;
 }
 
+namespace
+{
 std::string itoa(int value)
 {
   std::stringstream stream;
   stream << value;
   return stream.str();
+}
+}
+
+std::string Btree::toString()
+{
+  if (isEmpty())
+    return "";
+
+  std::vector<Node*> nodes;
+  nodes.push_back(root);
+  std::vector<std::string> levels;
+  
+  while(!nodes.empty())
+  {
+    levels.push_back("");
+    std::vector<Node*> nextLevel;
+    for (auto node : nodes)
+    {
+      levels.back() += itoa(node->val);
+      levels.back() += ' ';
+      if (node->left)
+        nextLevel.push_back(node->left);
+      if (node->right)
+        nextLevel.push_back(node->right);
+    }
+    nodes = std::move(nextLevel);
+  }
+
+  std::string result = "";
+  for (auto& level : levels)
+  {
+    result += level + "\n";
+  }
+  return result;
 }
 
 std::string Btree::inOrderTraversal()
@@ -380,6 +419,29 @@ TEST(Btree, Remove_FromMiddle_int) {
   EXPECT_TRUE(T.find(4));
   EXPECT_FALSE(T.find(5));
   EXPECT_TRUE(T.find(6));
+}
+
+TEST(Btree, Remove_Complex_Node) {
+  Btree T;
+  EXPECT_TRUE(T.insert(1));
+  EXPECT_TRUE(T.insert(3));
+  EXPECT_TRUE(T.insert(2));
+  EXPECT_TRUE(T.insert(5));
+  EXPECT_TRUE(T.insert(4));
+  EXPECT_TRUE(T.insert(6));
+
+  EXPECT_STREQ("1 \n3 \n2 5 \n4 6 \n", T.toString().c_str());
+
+  EXPECT_TRUE(T.remove(3));
+
+  EXPECT_TRUE(T.find(1));
+  EXPECT_TRUE(T.find(2));
+  EXPECT_FALSE(T.find(3));
+  EXPECT_TRUE(T.find(4));
+  EXPECT_TRUE(T.find(5));
+  EXPECT_TRUE(T.find(6));
+
+  EXPECT_STREQ("1 \n4 \n2 5 \n6 \n", T.toString().c_str());
 }
 
 TEST(Btree, Traversals) {
