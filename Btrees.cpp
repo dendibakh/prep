@@ -225,87 +225,88 @@ std::string Btree::toString()
 
 std::string Btree::inOrderTraversal()
 {
-  std::string result = "";
-  std::stack<Node*> inOrder;
+  std::stack<Node*> traversal;
   Node* current = root;
 
-  do
+  std::string result;
+  while(!traversal.empty() || current != nullptr)
   {
     while (current)
     {
-      inOrder.push(current);
+      traversal.push(current);
       current = current->left;
     }
 
-    if (!inOrder.empty())
+    if (current == nullptr && !traversal.empty())
     {
-      Node* top = inOrder.top();
-      inOrder.pop();
-      result += itoa(top->val) + ' ';
-      current = top->right;
+      Node* temp = traversal.top();
+      result += itoa(temp->val) + ' ';
+      traversal.pop();
+      current = temp->right;
     }
   }
-  while(!inOrder.empty() || current);
 
   return result;
 }
 
 std::string Btree::preOrderTraversal()
 {
-  std::string result = "";
-  std::stack<Node*> inOrder;
+  std::stack<Node*> traversal;
   Node* current = root;
 
-  do
+  std::string result;
+  while(!traversal.empty() || current != nullptr)
   {
     while (current)
     {
+      traversal.push(current);
       result += itoa(current->val) + ' ';
-      inOrder.push(current);
       current = current->left;
     }
 
-    if (!inOrder.empty())
+    if (current == nullptr && !traversal.empty())
     {
-      Node* top = inOrder.top();
-      inOrder.pop();
-      current = top->right;
+      Node* temp = traversal.top();
+      traversal.pop();
+      current = temp->right;
     }
   }
-  while(!inOrder.empty() || current);
 
   return result;
 }
 
 std::string Btree::postOrderTraversal()
 {
-  std::string result = "";
-  std::stack<Node*> postOrder;
+  std::stack<Node*> traversal;
   Node* current = root;
   Node* lastVisited = nullptr;
 
-  while(!postOrder.empty() || current)
+  std::string result;
+  while(!traversal.empty() || current != nullptr)
   {
-    if (current)
+    while (current)
     {
-      postOrder.push(current);
+      traversal.push(current);
       current = current->left;
     }
-    else
+
+    if (!traversal.empty())
     {
-      Node* top = postOrder.top();
-      if (top->right && lastVisited != top->right)
+      Node* temp = traversal.top();
+
+      if (temp->right && temp->right != lastVisited)
       {
-        current = top->right;
+        current = temp->right;
       }
       else
       {
-        result += itoa(top->val) + ' ';
-        lastVisited = postOrder.top();
-        postOrder.pop();
+        result += itoa(temp->val) + ' ';
+        traversal.pop();
+        lastVisited = temp;
       }
     }
-  } 
+  }
+
   return result;
 }
 

@@ -5,17 +5,6 @@
 #include <string>
 #include <sstream>
 
-// find
-// insert
-// delete
-// red-black bst
-// iterations:
-// - inorder
-// - preorder
-// - postorder
-//
-// iterators (optionaly)
-
 enum class Color
 {
 RED = 0,
@@ -30,12 +19,16 @@ class RBtree {
     Node *right;
   };
 
-  bool nodeHasBothChildren(Node* node);
   bool isRed(Node* node);
   bool insert(Node*& node, int key);
+  Node* RotateLeft(Node* node);
+  Node* RotateRight(Node* node);
+  Node** findNode(int key);
+  void flipColors(Node* node);
 
 public:
   RBtree();
+  ~RBtree();
   RBtree(const RBtree &rhs) = delete;
   RBtree operator=(const RBtree &rhs) = delete;
 
@@ -45,22 +38,17 @@ public:
   int height();
 
   std::string toString();
-  
-  std::string inOrderTraversal();
-  std::string preOrderTraversal();
-  std::string postOrderTraversal();
 
-protected:
-  Node* RotateLeft(Node* node);
-  Node* RotateRight(Node* node);
-  Node** findNode(int key);
-  void flipColors(Node* node);
- 
 private:
   Node *root;
 };
 
 RBtree::RBtree() : root(nullptr) {}
+
+RBtree::~RBtree()
+{
+  // ToDo: implement deletion of memory
+}
 
 bool RBtree::insert(int key) 
 {
@@ -71,7 +59,7 @@ bool RBtree::insert(Node*& node, int key)
 {
   if (!node)
   {
-    node = new Node{ key, Color::BLACK, nullptr, nullptr };
+    node = new Node{ key, Color::RED, nullptr, nullptr };
     return true;
   }
 
@@ -128,7 +116,8 @@ RBtree::Node* RBtree::RotateRight(Node* node)
 
 void RBtree::flipColors(Node* node)
 {
-  if (isRed(node))
+  // Root is supposed to be always black
+  if ((node != root) && isRed(node))
     return;
   if (!isRed(node->right))
     return;
@@ -190,13 +179,6 @@ int RBtree::height()
   return height;
 }
 
-bool RBtree::nodeHasBothChildren(Node* node)
-{
-  if (!node)
-    throw std::runtime_error("WTF? node is invalid.");
-  return node->right && node->left;
-}
-
 namespace
 {
 std::string itoa(int value)
@@ -222,6 +204,7 @@ std::string RBtree::toString()
     std::vector<Node*> nextLevel;
     for (auto node : nodes)
     {
+      levels.back() += ( node->col == Color::RED ) ? 'R' : 'B';
       levels.back() += itoa(node->val);
       levels.back() += ' ';
       if (node->left)
@@ -237,92 +220,6 @@ std::string RBtree::toString()
   {
     result += level + "\n";
   }
-  return result;
-}
-
-std::string RBtree::inOrderTraversal()
-{
-  std::string result = "";
-  std::stack<Node*> inOrder;
-  Node* current = root;
-
-  do
-  {
-    while (current)
-    {
-      inOrder.push(current);
-      current = current->left;
-    }
-
-    if (!inOrder.empty())
-    {
-      Node* top = inOrder.top();
-      inOrder.pop();
-      result += itoa(top->val) + ' ';
-      current = top->right;
-    }
-  }
-  while(!inOrder.empty() || current);
-
-  return result;
-}
-
-std::string RBtree::preOrderTraversal()
-{
-  std::string result = "";
-  std::stack<Node*> inOrder;
-  Node* current = root;
-
-  do
-  {
-    while (current)
-    {
-      result += itoa(current->val) + ' ';
-      inOrder.push(current);
-      current = current->left;
-    }
-
-    if (!inOrder.empty())
-    {
-      Node* top = inOrder.top();
-      inOrder.pop();
-      current = top->right;
-    }
-  }
-  while(!inOrder.empty() || current);
-
-  return result;
-}
-
-std::string RBtree::postOrderTraversal()
-{
-  std::string result = "";
-  std::stack<Node*> postOrder;
-  Node* current = root;
-  Node* lastVisited = nullptr;
-
-  while(!postOrder.empty() || current)
-  {
-    if (current)
-    {
-      postOrder.push(current);
-      current = current->left;
-    }
-    else
-    {
-      Node* top = postOrder.top();
-      if (top->right && lastVisited != top->right)
-      {
-        current = top->right;
-      }
-      else
-      {
-        result += itoa(top->val) + ' ';
-        lastVisited = postOrder.top();
-        postOrder.pop();
-      }
-    }
-  } 
   return result;
 }
 
@@ -387,51 +284,34 @@ TEST(RBtree, Insert_Find) {
   EXPECT_TRUE(T.find(3));
 }
 
-TEST(RBtree, Traversals) {
+TEST(RBtree, ToString) {
   RBtree T;
-  EXPECT_TRUE(T.insert(7));
-  EXPECT_TRUE(T.insert(3));
-  EXPECT_TRUE(T.insert(11));
-  EXPECT_TRUE(T.insert(1));
-  EXPECT_TRUE(T.insert(5));
-  EXPECT_TRUE(T.insert(9));
-  EXPECT_TRUE(T.insert(13));
 
-  EXPECT_STREQ("1 3 5 7 9 11 13 ", T.inOrderTraversal().c_str());
-  EXPECT_STREQ("7 3 1 5 11 9 13 ", T.preOrderTraversal().c_str());
-  EXPECT_STREQ("1 5 3 9 13 11 7 ", T.postOrderTraversal().c_str());
-}
+  EXPECT_TRUE(T.insert(50));
+  EXPECT_STREQ("R50 \n", T.toString().c_str());
 
-class RBtreeFake : public RBtree
-{
-  public:
-    using RBtree::RotateRight;
-    using RBtree::RotateLeft;
-    using RBtree::flipColors;
-    using RBtree::findNode;
-};
+  EXPECT_TRUE(T.insert(25));
+  EXPECT_STREQ("R50 \nR25 \n", T.toString().c_str());
 
-TEST(RBtree, Rotations) 
-{
-  RBtreeFake T;
-  EXPECT_TRUE(T.insert(7));
-  EXPECT_TRUE(T.insert(3));
-  EXPECT_TRUE(T.insert(11));
-  EXPECT_TRUE(T.insert(1));
-  EXPECT_TRUE(T.insert(5));
-  EXPECT_TRUE(T.insert(9));
-  EXPECT_TRUE(T.insert(13));
-}
+  EXPECT_TRUE(T.insert(15));
+  EXPECT_STREQ("R25 \nB15 B50 \n", T.toString().c_str());
 
-TEST(RBtree, flippingColors) 
-{
-  RBtreeFake T;
-  EXPECT_TRUE(T.insert(7));
-  EXPECT_TRUE(T.insert(3));
-  EXPECT_TRUE(T.insert(11));
-  EXPECT_TRUE(T.insert(1));
-  EXPECT_TRUE(T.insert(5));
-  EXPECT_TRUE(T.insert(9));
-  EXPECT_TRUE(T.insert(13));
+  EXPECT_TRUE(T.insert(35));
+  EXPECT_STREQ("R25 \nB15 B50 \nR35 \n", T.toString().c_str());
+
+  EXPECT_TRUE(T.insert(20));
+  EXPECT_STREQ("R25 \nB20 B50 \nR15 R35 \n", T.toString().c_str());
+
+  EXPECT_TRUE(T.insert(30));
+  EXPECT_STREQ("R35 \nR25 B50 \nB20 B30 \nR15 \n", T.toString().c_str());
+
+  EXPECT_TRUE(T.insert(90));
+  EXPECT_STREQ("R35 \nR25 B90 \nB20 B30 R50 \nR15 \n", T.toString().c_str());
+
+  EXPECT_TRUE(T.insert(32));
+  EXPECT_STREQ("R35 \nR25 B90 \nB20 B32 R50 \nR15 R30 \n", T.toString().c_str());
+
+  EXPECT_TRUE(T.insert(33));
+  EXPECT_STREQ("R32 \nB25 B35 \nB20 B30 B33 B90 \nR15 R50 \n", T.toString().c_str());
 }
 
