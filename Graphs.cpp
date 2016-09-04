@@ -51,9 +51,7 @@ std::vector<int> Graph::IDFS(int startVertex)
     return retDFS;
 
   std::vector<bool> marked(edges.size(), false);
-  std::vector<bool> visited(edges.size(), false);
 
-  marked[startVertex] = true;
   std::stack<int> dfs;
   dfs.push(startVertex);
 
@@ -62,18 +60,15 @@ std::vector<int> Graph::IDFS(int startVertex)
     int current = dfs.top();
     dfs.pop();
 
-    if (!visited[current])
+    if (!marked[current])
     {
-      visited[current] = true;
+      marked[current] = true;
       retDFS.push_back(current);
  
       for (auto iter = edges[current].rbegin(); iter != edges[current].rend(); ++iter)
       {   
-        if (!marked[*iter] || !visited[*iter])
-        {
-          marked[*iter] = true;
+        if (!marked[*iter])
           dfs.push(*iter);
-        }
       }
     }
   }
@@ -158,8 +153,9 @@ TEST(Graph, ConstructionTest)
   
   std::vector<int> expectedBFS = {0, 1, 2, 3, 5, 4};
   EXPECT_TRUE(expectedBFS == g.IBFS(0));
-  
-  EXPECT_TRUE(expectedDFS == g.IDFS(0));
+   
+  for (int i = 0; i < 6; ++i)
+    EXPECT_TRUE(g.DFS(i) == g.IDFS(i));
 
   //for (auto elem : g.IDFS(0))
   //  std::cout << elem << ' ';
