@@ -452,7 +452,12 @@ TEST(Btree, Traversals) {
   EXPECT_TRUE(T.insert(9));
   EXPECT_TRUE(T.insert(13));
 
+  // All thos traversals are variations of DFS.
+  // Classic DFS corresponds to preorder traversal.
   EXPECT_STREQ("1 3 5 7 9 11 13 ", T.inOrderTraversal().c_str());
   EXPECT_STREQ("7 3 1 5 11 9 13 ", T.preOrderTraversal().c_str());
   EXPECT_STREQ("1 5 3 9 13 11 7 ", T.postOrderTraversal().c_str());
+
+  // BFS is equal to level-order traversal.
 }
+
