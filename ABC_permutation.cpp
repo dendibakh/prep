@@ -6,11 +6,11 @@
 
 namespace rotations
 {
-void permuteString(std::string str, int fixed)
+void permuteString(std::string& str, int fixed)
 {
   if (fixed < 0)
   {
-    std::cout << str << std::endl;
+    //std::cout << str << std::endl;
     return;
   }
  
@@ -20,12 +20,13 @@ void permuteString(std::string str, int fixed)
   {
     std::rotate(str.begin() + fixed, str.end() - 1, str.end());
     permuteString(str, fixed - 1);
+    std::rotate(str.begin() + fixed, str.end() - 1, str.end());
   }
 }
 
 void permuteString(const std::string& str)
 {
-  permuteString(str, str.size() - 2);
+  permuteString(const_cast<std::string&>(str), str.size() - 2);
 }
 }
 
@@ -40,7 +41,7 @@ void permuteString(std::string& str, int l, int r)
 {
    if (l == r)
    {
-     std::cout << str << std::endl;
+     //std::cout << str << std::endl;
    }
    else
    {
@@ -95,7 +96,7 @@ TEST(ABC_permutation, 6)
   permuteString("abcde");
 }
 
-/*
+
 TEST(ABC_permutation, 7)
 {
   using namespace backtracking;
@@ -107,4 +108,4 @@ TEST(ABC_permutation, 8)
   using namespace rotations;
   permuteString("abcdefghj");
 }
-*/
+
