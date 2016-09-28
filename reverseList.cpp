@@ -25,8 +25,44 @@ void addToList(Node*& head, int val)
   }
 }
 
-void reverseList(Node* head)
+void reverseList(Node*& head)
 {
+  if (!head)
+    return;
+
+  Node* cur = head;
+  Node* prev = nullptr;
+  while (cur)
+  {
+    Node* next = cur->next;
+    cur->next = prev;
+    prev = cur;
+    cur = next;
+  }
+  head = prev;
+}
+
+void reverseListRecursive(Node*& head, Node* cur)
+{
+  if (cur->next)
+  {
+    reverseListRecursive(head, cur->next);
+    cur->next->next = cur;
+  }
+  else
+  {
+    head = cur;
+  }
+}
+
+void reverseListRecursive(Node*& head)
+{
+  if (head)
+  {
+    Node* temp = head;
+    reverseListRecursive(head, head);
+    temp->next = nullptr;
+  }
 }
 
 void printList(Node* head)
@@ -45,6 +81,8 @@ bool twoListsAreEqual(Node* head1, Node* head2)
   {
     if (head1->val != head2->val)
       return false;
+    head1 = head1->next;
+    head2 = head2->next;
   }
   if (head1 || head2)
     return false;
@@ -53,25 +91,110 @@ bool twoListsAreEqual(Node* head1, Node* head2)
 
 TEST(reverseList, util)
 {
-  Node* list1;
+  Node* list1 = nullptr;
   addToList(list1, 5);
-  //addToList(list1, 2);
-  //addToList(list1, 7);
-  //addToList(list1, 5);
-  //printList(list1);
+  addToList(list1, 2);
+  addToList(list1, 7);
+  addToList(list1, 5);
+  printList(list1);
+
+  Node* list2 = nullptr;
+  addToList(list2, 5);
+  addToList(list2, 2);
+  addToList(list2, 7);
+
+  EXPECT_FALSE(twoListsAreEqual(list1, list2));
+  
+  addToList(list2, 5);
+  EXPECT_TRUE(twoListsAreEqual(list1, list2));
+
+  addToList(list2, 5);
+  EXPECT_FALSE(twoListsAreEqual(list1, list2));
 }
 
 TEST(reverseList, empty)
 {
-  Node* list;
-  //rever
+  Node* list = nullptr;
+
+  Node* expected = nullptr;
+
+  reverseList(list);
+
+  EXPECT_TRUE(twoListsAreEqual(list, expected));
 }
 
 TEST(reverseList, oneElem)
 {
+  Node* list = nullptr;
+  addToList(list, 5);
+
+  Node* expected = nullptr;
+  addToList(expected, 5);
+
+  reverseList(list);
+
+  EXPECT_TRUE(twoListsAreEqual(list, expected));
 }
 
 TEST(reverseList, manyElems)
 {
+  Node* list = nullptr;
+  addToList(list, 5);
+  addToList(list, 2);
+  addToList(list, 7);
+  addToList(list, 5);
+
+  Node* expected = nullptr;
+  addToList(expected, 5);
+  addToList(expected, 7);
+  addToList(expected, 2);
+  addToList(expected, 5);
+
+  reverseList(list);
+
+  EXPECT_TRUE(twoListsAreEqual(list, expected));
+}
+
+TEST(reverseListRecursive, empty)
+{
+  Node* list = nullptr;
+
+  Node* expected = nullptr;
+
+  reverseListRecursive(list);
+
+  EXPECT_TRUE(twoListsAreEqual(list, expected));
+}
+
+TEST(reverseListRecursive, oneElem)
+{
+  Node* list = nullptr;
+  addToList(list, 5);
+
+  Node* expected = nullptr;
+  addToList(expected, 5);
+
+  reverseListRecursive(list);
+
+  EXPECT_TRUE(twoListsAreEqual(list, expected));
+}
+
+TEST(reverseListRecursive, manyElems)
+{
+  Node* list = nullptr;
+  addToList(list, 5);
+  addToList(list, 2);
+  addToList(list, 7);
+  addToList(list, 5);
+
+  Node* expected = nullptr;
+  addToList(expected, 5);
+  addToList(expected, 7);
+  addToList(expected, 2);
+  addToList(expected, 5);
+
+  reverseListRecursive(list);
+
+  EXPECT_TRUE(twoListsAreEqual(list, expected));
 }
 
