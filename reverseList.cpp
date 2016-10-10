@@ -1,6 +1,7 @@
 #include <vector>
 #include <gtest/gtest.h>
 #include <iostream>
+#include <stack>
 
 struct Node
 {
@@ -40,6 +41,37 @@ void reverseList(Node*& head)
     cur = next;
   }
   head = prev;
+}
+
+void reverseListStack(Node*& head)
+{
+  if (!head || !head->next)
+    return;
+
+  std::stack<Node*> order;
+
+  Node* cur = head;
+  while(cur)
+  {
+    order.push(cur);
+    cur = cur->next;
+  }
+
+  head = order.top();
+  order.pop();
+
+  cur = head;
+  Node* next = nullptr;
+
+  while(!order.empty())
+  {
+    next = order.top();
+    order.pop();
+    cur->next = next;
+    cur = next;
+  }
+
+  cur->next = nullptr;
 }
 
 void reverseListRecursive(Node*& head, Node* cur)
@@ -198,3 +230,45 @@ TEST(reverseListRecursive, manyElems)
   EXPECT_TRUE(twoListsAreEqual(list, expected));
 }
 
+TEST(reverseListStack, empty)
+{
+  Node* list = nullptr;
+
+  Node* expected = nullptr;
+
+  reverseListStack(list);
+
+  EXPECT_TRUE(twoListsAreEqual(list, expected));
+}
+
+TEST(reverseListStack, oneElem)
+{
+  Node* list = nullptr;
+  addToList(list, 5);
+
+  Node* expected = nullptr;
+  addToList(expected, 5);
+
+  reverseListStack(list);
+
+  EXPECT_TRUE(twoListsAreEqual(list, expected));
+}
+
+TEST(reverseListStack, manyElems)
+{
+  Node* list = nullptr;
+  addToList(list, 5);
+  addToList(list, 2);
+  addToList(list, 7);
+  addToList(list, 5);
+
+  Node* expected = nullptr;
+  addToList(expected, 5);
+  addToList(expected, 7);
+  addToList(expected, 2);
+  addToList(expected, 5);
+
+  reverseListStack(list);
+
+  EXPECT_TRUE(twoListsAreEqual(list, expected));
+}
