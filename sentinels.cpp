@@ -85,6 +85,7 @@ Effective loop:
         jne     .L3
 */
 
+/*
 TEST(sentinels, find_benchmark)
 {
   int v[1000];
@@ -98,6 +99,7 @@ TEST(sentinels, find_benchmark)
   for (size_t i = 0; i < 1000000; ++i)
     EXPECT_FALSE(find_benchmark(v, 999, 5));
 }
+*/
 
 bool sentinel_find_benchmark(int* vect, size_t size, int val)
 {
@@ -126,7 +128,7 @@ Effective loop:
         cmp     eax, DWORD PTR [rbp-36]
         jne     .L2
 */
-
+/*
 TEST(sentinels, sentinel_find_benchmark)
 {
   int v[1000];
@@ -140,7 +142,7 @@ TEST(sentinels, sentinel_find_benchmark)
   for (size_t i = 0; i < 1000000; ++i)
     EXPECT_FALSE(sentinel_find_benchmark(v, 999, 5));
 }
-
+*/
 
 /*
 Measurements:

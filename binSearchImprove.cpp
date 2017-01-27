@@ -154,6 +154,7 @@ TEST(binSearchImprove, dense_find2)
   EXPECT_TRUE(lower_bound(arr1, 9) == fast_lower_bound(arr2, 9));
 }
 
+/*
 TEST(binSearchImprove, dense_find3)
 {
   auto init = { 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 };
@@ -166,4 +167,4 @@ TEST(binSearchImprove, dense_find3)
   VectorTrackingAccesses<int> arr2 = init;
   EXPECT_TRUE(lower_bound(arr1, 9) == fast_lower_bound(arr2, 9));
 }
-
+*/

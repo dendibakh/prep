@@ -75,7 +75,7 @@ void SP::relaxEdge(Edge& e)
 
 void Graph::addEdge(int from, int to, int weight)
 {
-  if (from < edges.size() && to < edges.size())
+  if (from < static_cast<int>(edges.size()) && to < static_cast<int>(edges.size()))
   {
     edges[from].push_back(Edge{from, to, weight});
     //edges[to].push_back(from);

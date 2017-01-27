@@ -4,8 +4,8 @@
 #include <vector>
 #include <algorithm>
 
-int medianOfThree(int* arr, int left, int right)
-{
+int medianOfThree(int* arr, int left, int right);
+/*{
     int mid = left + (right - left)/2;
     if (arr[right] < arr[left])
         std::swap(arr[left], arr[right]);
@@ -14,7 +14,7 @@ int medianOfThree(int* arr, int left, int right)
     if (arr[right] < arr[mid])
         std::swap(arr[right], arr[mid]);
     return arr[mid];
-}
+}*/
 
 int quickselect(int* arr, int lo, int high, int k)
 {
@@ -78,7 +78,7 @@ void testCase(const std::vector<int>& arr, int k)
 void testAllK(const std::vector<int>& arr)
 {
   auto size = arr.size();
-  for (int i = 0; i < size; ++i)
+  for (size_t i = 0; i < size; ++i)
     testCase(arr, i);
 }
 

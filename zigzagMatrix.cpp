@@ -11,10 +11,10 @@ std::vector<int> zigzagTraversal(const Matrix& matrix)
   if (matrix.empty())
     return traversal;
 
-  size_t n = matrix[0].size();
-  size_t m = matrix.size();
+  int n = matrix[0].size();
+  int m = matrix.size();
 
-  for (size_t sum = 0; sum < m + n - 1; ++sum)
+  for (int sum = 0; sum < m + n - 1; ++sum)
   {
     if (sum % 2 == 0)
     {

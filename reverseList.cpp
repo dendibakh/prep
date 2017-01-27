@@ -9,8 +9,8 @@ struct Node
   int val;
 };
 
-void addToList(Node*& head, int val)
-{
+void addToList(Node*& head, int val);
+/*{
   if (!head)
   {
     head = new Node {nullptr, val};
@@ -24,7 +24,7 @@ void addToList(Node*& head, int val)
     }
     cur->next = new Node {nullptr, val};
   }
-}
+}*/
 
 void reverseList(Node*& head)
 {
@@ -97,18 +97,18 @@ void reverseListRecursive(Node*& head)
   }
 }
 
-void printList(Node* head)
-{
+void printList(Node* head);
+/*{
   while (head)
   {
     std::cout << head->val << ' ';
     head = head->next;
   }
   std::cout << '\n';
-}
+}*/
 
-bool twoListsAreEqual(Node* head1, Node* head2)
-{
+bool twoListsAreEqual(Node* head1, Node* head2);
+/*{
   while (head1 && head2)
   {
     if (head1->val != head2->val)
@@ -119,7 +119,7 @@ bool twoListsAreEqual(Node* head1, Node* head2)
   if (head1 || head2)
     return false;
   return true;
-}
+}*/
 
 TEST(reverseList, util)
 {

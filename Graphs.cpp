@@ -6,6 +6,8 @@
 #include <stack>
 #include <queue>
 
+namespace simpleGraph
+{
 struct Edge
 {
   int from;
@@ -32,7 +34,7 @@ Graph::Graph(int vertexNumber) : edges(vertexNumber)
 
 void Graph::addEdge(int from, int to)
 {
-  if (from < edges.size() && to < edges.size())
+  if (from < static_cast<int>(edges.size()) && to < static_cast<int>(edges.size()))
   {
     edges[from].push_back(to);
     edges[to].push_back(from);
@@ -47,7 +49,7 @@ std::vector<int> Graph::IDFS(int startVertex)
 {
   std::vector<int> retDFS;
 
-  if (startVertex > edges.size() - 1)
+  if (startVertex > static_cast<int>(edges.size()) - 1)
     return retDFS;
 
   std::vector<bool> marked(edges.size(), false);
@@ -93,7 +95,7 @@ std::vector<int> Graph::DFS(int startVertex)
 {
   std::vector<int> retDFS;
 
-  if (startVertex > edges.size() - 1)
+  if (startVertex > static_cast<int>(edges.size()) - 1)
     return retDFS;
 
   std::vector<bool> marked(edges.size(), false);
@@ -107,7 +109,7 @@ std::vector<int> Graph::IBFS(int startVertex)
 {
   std::vector<int> retBFS;
 
-  if (startVertex > edges.size() - 1)
+  if (startVertex > static_cast<int>(edges.size()) - 1)
     return retBFS;
 
   std::vector<bool> marked(edges.size(), false);
@@ -161,3 +163,4 @@ TEST(Graph, ConstructionTest)
   //  std::cout << elem << ' ';
 }
 
+}

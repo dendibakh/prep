@@ -9,6 +9,8 @@
 // 2. Do not merge arrays if they are already sorted.
 // 3. Eliminate copying by returning aux array.
 
+namespace mergesort
+{
 void merge(int* arr, int* aux, int lo, int mid, int high)
 {
   for (int k = lo; k <= high; ++k)
@@ -80,4 +82,6 @@ TEST(mergesort, 1)
   testCase({5, 3, 7, 1, 6, 10, 12, 7, 3, 2, 6, 4, 16, 9, 8});
   testCase({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2});
   testCase({15, 78, 8, 7, 99, 45, 26, 67, 19, 31, 44, 65, 82, 73 });
+}
+
 }

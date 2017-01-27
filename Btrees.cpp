@@ -136,7 +136,7 @@ bool Btree::remove(int key)
       break;
   }
   (*node)->val = (*temp)->val;
-  removeSimpleNode(temp);
+  return removeSimpleNode(temp);
 }
 
 bool Btree::removeSimpleNode(Node** node)
